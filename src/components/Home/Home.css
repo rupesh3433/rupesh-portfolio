@@ -1,0 +1,37 @@
+@keyframes slideRightFade {
+    0% {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    80% {
+      opacity: 0.7;
+    }
+    100% {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+  .animate-slideRightFade {
+    animation: slideRightFade 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  @keyframes slideDown {
+    0% {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    80% {
+      opacity: 0.8;
+    }
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+  
+  .animate-slideDown {
+    animation: slideDown 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+  
+  
