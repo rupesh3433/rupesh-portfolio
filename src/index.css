@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code&display=swap');
+@import "tailwindcss";
+
+/* Your custom CSS below */
+
+
+/* Custom animations */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* Custom styles */
+
+/* Custom bounce animation */
+.bounce-animation {
+  animation: bounce 2s infinite;
+}
+
+/* Gradient text for hero section */
+.gradient-text {
+  background: linear-gradient(45deg, #2563eb, #4f46e5);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
