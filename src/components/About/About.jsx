@@ -1,181 +1,317 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
+import { motion } from "framer-motion";
+import RupeshImage1 from "../../assets/my_photo.png";
 
-// Tab button component with animations
-function TabButton({ tab, activeTab, setActiveTab }) {
-  return (
-    <button
-      onClick={() => setActiveTab(tab)}
-      className={`relative px-6 py-3 text-lg font-medium transition-all duration-300 focus:outline-none ${
-        activeTab === tab
-          ? "text-blue-400"
-          : "text-gray-400 hover:text-gray-200"
-      }`}
-    >
-      {tab}
-      {activeTab === tab && (
-        <span className="absolute inset-x-0 bottom-0 h-0.5 bg-blue-400 animate-underline" />
-      )}
-    </button>
-  );
-}
+// FontAwesome Imports
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEnvelope, faFileAlt } from "@fortawesome/free-regular-svg-icons";
+import { faPhone } from "@fortawesome/free-solid-svg-icons";
+import {
+  faGithub,
+  faLinkedin,
+  faInstagram,
+  faYoutube,
+  faFacebook,
+} from "@fortawesome/free-brands-svg-icons";
 
-// Fade-in animation wrapper
-function FadeIn({ children, delay }) {
-  return (
-    <div
-      className="opacity-0 animate-fade-in"
-      style={{ animationDelay: `${delay}ms` }}
-    >
-      {children}
-    </div>
-  );
-}
-
-// Profile details component
-function ProfileDetails() {
-  return (
-    <FadeIn delay={100}>
-      <div className="space-y-4">
-        <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-          Professional Profile
-        </h2>
-        <p className="text-gray-300 leading-relaxed">
-          I am a passionate Computer Engineer specializing in full-stack development
-          and system architecture. With {new Date().getFullYear() - 2018}+ years of
-          professional experience, I excel at crafting robust, scalable solutions
-          that bridge technical innovation with business objectives. My expertise
-          spans cloud-native applications, microservices architecture, and
-          performance optimization.
-        </p>
-      </div>
-    </FadeIn>
-  );
-}
-
-// Education details component
-function EducationDetails() {
-  return (
-    <FadeIn delay={100}>
-      <div className="space-y-6">
-        <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-          Education
-        </h2>
-        <div className="space-y-4">
-          <div className="pl-4 border-l-4 border-blue-400">
-            <h3 className="text-xl font-semibold text-gray-100">
-              B.Tech in Computer Engineering
-            </h3>
-            <p className="text-gray-400">Pimpri Chinchwad College of Engineering</p>
-            <p className="text-gray-400">• 2022-2026</p>
-            <p className="mt-2 text-gray-300">
-              GPA: 7.0
-            </p>
-            <p className="mt-2 text-gray-300">
-              • Coursework: Advanced Algorithms, Distributed Systems,
-              Machine Learning
-            </p>
-          </div>
-        </div>
-      </div>
-    </FadeIn>
-  );
-}
-
-// Experience details component
-function ExperienceDetails() {
-  return (
-    <FadeIn delay={100}>
-      <div className="space-y-6">
-        <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-          Professional Journey
-        </h2>
-        <div className="space-y-4">
-          <div className="p-6 bg-gray-800 rounded-lg transition-transform duration-300 hover:scale-[1.02]">
-            <h3 className="text-xl font-semibold text-gray-100">
-              Senior Software Engineer @ TechCorp
-            </h3>
-            <p className="text-gray-400">2022-Present</p>
-            <ul className="mt-3 space-y-2 text-gray-300 list-disc list-inside">
-              <li>Led migration of legacy systems to cloud-native architecture</li>
-              <li>Developed high-performance API gateway handling 10k+ RPM</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </FadeIn>
-  );
-}
-
-// Skills details component
-function SkillsDetails() {
-  const skills = [
-    { name: "Frontend", tech: "React, Next.js, TypeScript, Tailwind" },
-    { name: "Backend", tech: "Node.js, Python, GraphQL, REST" },
-    { name: "Cloud", tech: "AWS, Docker, Kubernetes, Terraform" },
-    { name: "Data", tech: "PostgreSQL, MongoDB, Redis, Elasticsearch" },
-  ];
-
-  return (
-    <FadeIn delay={100}>
-      <div className="space-y-6">
-        <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-          Technical Expertise
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {skills.map((skill, index) => (
-            <div
-              key={index}
-              className="p-4 bg-gray-800 rounded-lg animate-slide-up"
-              style={{ animationDelay: `${index * 50}ms` }}
-            >
-              <h3 className="text-lg font-semibold text-blue-400">{skill.name}</h3>
-              <p className="mt-2 text-gray-300">{skill.tech}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </FadeIn>
-  );
-}
+// React Icons Imports
+import { FaReact, FaNode, FaAws, FaDocker } from "react-icons/fa";
+import {
+  SiNextdotjs,
+  SiTailwindcss,
+  SiPython,
+  SiKubernetes,
+  SiMongodb,
+  SiPostgresql,
+  SiRedis,
+} from "react-icons/si";
+import { MdApi } from "react-icons/md";
 
 export default function About({ setActiveSession }) {
-  const [activeTab, setActiveTab] = useState("Profile");
-
   useEffect(() => {
-    document.documentElement.style.overflow = 'hidden';
-    return () => document.documentElement.style.overflow = 'auto';
+    document.documentElement.style.overflow = "hidden";
+    return () => (document.documentElement.style.overflow = "auto");
   }, []);
 
   return (
-    <div className="h-[90vh] bg-black overflow-hidden">
-      <div className="h-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col">
-        {/* Tab Navigation */}
-        <nav className="flex space-x-8 border-b border-gray-700 py-6 mb-8">
-          {["Profile", "Education", "Experience", "Skills"].map((tab) => (
-            <TabButton
-              key={tab}
-              tab={tab}
-              activeTab={activeTab}
-              setActiveTab={setActiveTab}
-            />
-          ))}
-        </nav>
+    <div className="h-[90vh] bg-black overflow-y-auto scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-900">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Profile Section */}
+        <section className="animate-slide-in-left mb-16">
+          <div className="grid md:grid-cols-3 gap-8 items-center">
+            <div className="md:col-span-2 space-y-6">
+              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                Rupesh Poudel
+              </h1>
+              <p className="text-gray-300 text-lg leading-relaxed">
+                Passionate Computer Engineer specializing in full-stack
+                development and cloud architecture. Currently pursuing B.Tech at
+                PCCOE.
+              </p>
+              <div className="flex items-center space-x-4">
+                <div className="p-3 bg-blue-500/10 rounded-lg">
+                  <FontAwesomeIcon
+                    icon={faFileAlt}
+                    className="h-6 w-6 text-blue-400"
+                  />
+                </div>
+                <button className="text-white hover:text-blue-400 transition-colors">
+                  Download Resume
+                </button>
+              </div>
+              <div className="flex space-x-4">
+                <a
+                  href="mailto:rupesh.poudel22@pccoepune.org"
+                  className="social-link"
+                >
+                  <FontAwesomeIcon icon={faEnvelope} className="h-6 w-6" />
+                </a>
+                <a href="#" className="social-link">
+                  <FontAwesomeIcon icon={faGithub} className="h-6 w-6" />
+                </a>
+                <a href="#" className="social-link">
+                  <FontAwesomeIcon icon={faLinkedin} className="h-6 w-6" />
+                </a>
+              </div>
+            </div>
 
-        {/* Tab Content */}
-        <div className="flex-1 overflow-y-auto pb-12 scrollbar-thin scrollbar-thumb-gray-700 scrollbar-track-gray-800">
-          <div className="space-y-12">
-            {activeTab === "Profile" && <ProfileDetails />}
-            {activeTab === "Education" && <EducationDetails />}
-            {activeTab === "Experience" && <ExperienceDetails />}
-            {activeTab === "Skills" && <SkillsDetails />}
+
+            
+            {/* <div className="hidden md:block relative group">
+              <div className="absolute inset-0 bg-gradient-to-r rounded-2xl transform rotate-3 transition-transform duration-300 group-hover:rotate-2">
+                <motion.div
+                  className="w-full max-w-[400px] mb-0 md:mb-0 md:mr-12"
+                  initial={{ opacity: 0, x: -50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <div className="relative w-full rounded-full overflow-hidden hover:scale-105 transition-transform duration-300 mb-10">
+                    <img
+                      src={RupeshImage1}
+                      alt="Rupesh Professional Portrait"
+                      className="h-full w-full object-center"
+                      loading="lazy"
+                    />
+                  </div>
+                </motion.div>
+              </div> 
+            </div>*/}
+
+
+
           </div>
-        </div>
+        </section>
 
-        {/* Back Button */}
-        <div className="py-6 border-t border-gray-700">
+        {/* Education Timeline */}
+        <section className="animate-slide-in-right mb-16">
+          <h2 className="text-3xl font-bold text-white mb-8">Education</h2>
+          <div className="space-y-8 relative pl-8 border-l-2 border-gray-700">
+            <div className="absolute left-[-7px] top-0 w-3 h-3 bg-blue-400 rounded-full"></div>
+            <div className="relative pl-6">
+              <div className="absolute left-[-7px] w-3 h-3 bg-purple-400 rounded-full"></div>
+              <h3 className="text-xl font-semibold text-white">
+                B.Tech Computer Engineering
+              </h3>
+              <p className="text-gray-400 mt-1">
+                Pimpri Chinchwad College of Engineering
+              </p>
+              <p className="text-sm text-gray-500 mt-2">
+                2022 - 2026 | GPA: 7.0
+              </p>
+            </div>
+            <div className="relative pl-6">
+              <div className="absolute left-[-7px] w-3 h-3 bg-purple-400 rounded-full"></div>
+              <h3 className="text-xl font-semibold text-white">
+                Higher Secondary School
+              </h3>
+              <p className="text-gray-400 mt-1">ABC Junior College</p>
+              <p className="text-sm text-gray-500 mt-2">2020 - 2022 | 85%</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Skills Grid */}
+        <section className="animate-fade-in mb-16">
+          <h2 className="text-3xl font-bold text-white mb-8">
+            Technical Expertise
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              {
+                title: "Frontend",
+                icons: [
+                  { Icon: FaReact, label: "React", color: "#61DAFB" },
+                  { Icon: SiNextdotjs, label: "Next.js", color: "#000000" },
+                  {
+                    Icon: SiTailwindcss,
+                    label: "Tailwind CSS",
+                    color: "#38BDF8",
+                  },
+                ],
+              },
+              {
+                title: "Backend",
+                icons: [
+                  { Icon: FaNode, label: "Node.js", color: "#68A063" },
+                  { Icon: SiPython, label: "Python", color: "#3776AB" },
+                  { Icon: MdApi, label: "REST APIs", color: "#4FC08D" },
+                ],
+              },
+              {
+                title: "Cloud",
+                icons: [
+                  { Icon: FaAws, label: "AWS", color: "#FF9900" },
+                  { Icon: FaDocker, label: "Docker", color: "#2496ED" },
+                  { Icon: SiKubernetes, label: "Kubernetes", color: "#326CE5" },
+                ],
+              },
+              {
+                title: "Database",
+                icons: [
+                  { Icon: SiMongodb, label: "MongoDB", color: "#47A248" },
+                  { Icon: SiPostgresql, label: "PostgreSQL", color: "#336791" },
+                  { Icon: SiRedis, label: "Redis", color: "#DC382D" },
+                ],
+              },
+            ].map((skill, index) => (
+              <div
+                key={index}
+                className="p-6 bg-gray-800 rounded-xl transition-transform duration-300 hover:scale-[1.02]"
+              >
+                <h3 className="text-lg font-semibold text-blue-400 mb-4">
+                  {skill.title}
+                </h3>
+                <div className="flex justify-start space-x-5">
+                  {skill.icons.map(({ Icon, label, color }, iconIndex) => (
+                    <div key={iconIndex} className="relative group">
+                      <Icon
+                        className="h-8 w-8 text-gray-300 transition-colors duration-300"
+                        style={{ color: color }}
+                      />
+                      <div className="absolute inset-0 bg-current opacity-0 group-hover:opacity-20 transition-opacity duration-300 rounded-full" />
+                      <span className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-sm px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        {label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        {/* Contact Card */}
+        <section className="animate-slide-in-left">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl p-8">
+            <h2 className="text-3xl font-bold text-white mb-6">
+              Let's Connect
+            </h2>
+            <div className="grid md:grid-rows-2 gap-6">
+              <div className="space-y-4">
+                {/* Email */}
+                <div className="flex items-center space-x-4 hover:scale-[1.02] transition-transform duration-300">
+                  <div className="p-3 bg-blue-500/10 rounded-lg">
+                    <FontAwesomeIcon
+                      icon={faEnvelope}
+                      className="h-6 w-6 text-blue-400"
+                    />
+                  </div>
+                  <div>
+                    <p className="text-gray-400">Email</p>
+                    <a
+                      href="mailto:rupesh.poudel22@pccoepune.org"
+                      className="text-white hover:text-blue-400 transition-colors"
+                    >
+                      rupesh.poudel22@pccoepune.org
+                    </a>
+                  </div>
+                </div>
+
+                {/* Phone */}
+                <div className="flex items-center space-x-4 hover:scale-[1.02] transition-transform duration-300">
+                  <div className="p-3 bg-green-500/10 rounded-lg">
+                    <FontAwesomeIcon
+                      icon={faPhone}
+                      className="h-6 w-6 text-green-400"
+                    />
+                  </div>
+                  <div>
+                    <p className="text-gray-400">Phone</p>
+                    <a
+                      href="tel:+918149992239"
+                      className="text-white hover:text-green-400 transition-colors"
+                    >
+                      +91 81499 92239
+                    </a>
+                  </div>
+                </div>
+              </div>
+              {/* Social Media Links */}
+              <div className="flex flex-wrap gap-1 items-center justify-center md:justify-center">
+                {[
+                  {
+                    icon: faGithub,
+                    color: "#181717",
+                    url: "#",
+                    label: "GitHub",
+                  },
+                  {
+                    icon: faLinkedin,
+                    color: "#0A66C2",
+                    url: "#",
+                    label: "LinkedIn",
+                  },
+                  {
+                    icon: faInstagram,
+                    color: "#E4405F",
+                    url: "#",
+                    label: "Instagram",
+                  },
+                  {
+                    icon: faYoutube,
+                    color: "#FF0000",
+                    url: "#",
+                    label: "YouTube",
+                  },
+                  {
+                    icon: faFacebook,
+                    color: "#1877F2",
+                    url: "#",
+                    label: "Facebook",
+                  },
+                ].map((social, index) => (
+                  <a
+                    key={index}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-block p-3 rounded-xl transition-all duration-300 ease-out hover:scale-125 hover:-translate-y-1"
+                    aria-label={social.label}
+                  >
+                    <FontAwesomeIcon
+                      icon={social.icon}
+                      className="h-8 w-8 text-white"
+                      style={{
+                        transition: "color 0.3s ease, transform 0.3s ease",
+                      }}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.color = social.color)
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.color = "#fff")
+                      }
+                    />
+                  </a>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <div className="mt-12 text-center">
           <button
             onClick={() => setActiveSession("Home")}
-            className="px-8 py-3 bg-blue-600 text-white rounded-lg font-medium transition-all duration-300 hover:bg-blue-700 hover:scale-105"
+            className="px-8 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-all duration-300 hover:scale-105"
           >
             Return to Overview
           </button>

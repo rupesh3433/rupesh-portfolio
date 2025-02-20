@@ -76,7 +76,7 @@ export default function Home({ setActiveSession }) {
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5 }}
         >
-          <div className="relative w-full aspect-square rounded-full overflow-hidden hover:scale-105 transition-transform duration-300">
+          <div className="relative w-full aspect-square rounded-full overflow-hidden hover:scale-105 transition-transform duration-300 mb-20">
             <img
               src={RupeshImage1}
               alt="Rupesh Professional Portrait"
@@ -93,7 +93,7 @@ export default function Home({ setActiveSession }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <h1 className="text-3xl md:text-4xl lg:text-4xl font-bold text-sky-400 mb-4 md:mb-7">
+          <h1 className="text-2xl md:text-4xl lg:text-3xl font-bold text-sky-400 mb-4 md:mb-7">
             I am a{" "}
             <Typewriter
               words={[
