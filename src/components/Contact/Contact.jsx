@@ -4,7 +4,7 @@ export default function Contact() {
   return (
     <div className="h-auto lg:h-[90vh] bg-black flex items-center justify-center p-2 lg:overflow-hidden overflow-y-auto">
       
-      <div className="w-full mx-5 flex flex-col lg:flex-row gap-6 lg:gap-10 items-center lg:items-stretch">
+      <div className="w-full mx-5 mt-5 flex flex-col lg:flex-row gap-6 lg:gap-10 items-center lg:items-stretch">
 
 
         {/* Contact Form */}
@@ -19,12 +19,11 @@ export default function Contact() {
     sm:w-[95%]
     md:w-[70%]
     lg:w-3/4
-    lg:h-[80vh]    /* Only on large screens */
-    max-w-lg
+    lg:h-[80vh]   /* Only on large screens */
+    max-w-140
     mx-auto       /* Center align */
-    animate-slideInLeft opacity-0 [animation-fill-mode:forwards]
-  "
-        >
+    animate-slideInLeft opacity-0 [animation-fill-mode:forwards]">
+      
           <h2 className="text-2xl lg:text-3xl font-bold mb-5 text-white border-l-4 border-blue-500 pl-4">
             Contact Form
           </h2>
@@ -47,7 +46,7 @@ export default function Contact() {
               <input
                 type="email"
                 className="w-full px-4 py-3 text-sm lg:text-base bg-gray-800 rounded-lg border border-gray-600 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 text-white placeholder-gray-400 transition-all"
-                placeholder="your.email@example.com"
+                placeholder="abc.zyz@example.com"
               />
             </div>
 
