@@ -2,47 +2,62 @@ import React, { useRef, useState, useEffect } from "react";
 import emailjs from "@emailjs/browser";
 
 export default function Contact() {
-  const form = useRef();
+  const form = useRef(null);
   const [status, setStatus] = useState("");
   const [isSuccess, setIsSuccess] = useState(null);
 
-  // ✅ INIT EMAILJS (IMPORTANT)
-  useEffect(() => {
-    emailjs.init(import.meta.env.VITE_EMAILJS_PUBLIC_KEY);
-  }, []);
+  // 🔐 ENV VARIABLES (build-time safe)
+  const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+  const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+  const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
-  const sendEmail = (e) => {
+  // ✅ Initialize EmailJS safely
+  useEffect(() => {
+    if (!PUBLIC_KEY) {
+      console.error("❌ EmailJS PUBLIC KEY missing");
+      return;
+    }
+    emailjs.init(PUBLIC_KEY);
+  }, [PUBLIC_KEY]);
+
+  // 📩 Send Email
+  const sendEmail = async (e) => {
     e.preventDefault();
 
-    emailjs
-      .sendForm(
-        import.meta.env.VITE_EMAILJS_SERVICE_ID,
-        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
-        form.current
-      )
-      .then(
-        () => {
-          setStatus("Message sent successfully!");
-          setIsSuccess(true);
+    // 🛑 Hard guard (prevents payload crash)
+    if (!SERVICE_ID || !TEMPLATE_ID || !PUBLIC_KEY) {
+      console.error("❌ EmailJS ENV missing:", {
+        SERVICE_ID,
+        TEMPLATE_ID,
+        PUBLIC_KEY,
+      });
+      setStatus("Email service not configured.");
+      setIsSuccess(false);
+      return;
+    }
 
-          setTimeout(() => {
-            setStatus("");
-            setIsSuccess(null);
-          }, 1500);
+    try {
+      await emailjs.sendForm(SERVICE_ID, TEMPLATE_ID, form.current);
 
-          e.target.reset();
-        },
-        (error) => {
-          console.error("EmailJS Error:", error);
-          setStatus("Failed to send message. Please try again.");
-          setIsSuccess(false);
-        }
-      );
+      setStatus("Message sent successfully!");
+      setIsSuccess(true);
+
+      setTimeout(() => {
+        setStatus("");
+        setIsSuccess(null);
+      }, 1500);
+
+      e.target.reset();
+    } catch (error) {
+      console.error("❌ EmailJS Error:", error);
+      setStatus("Failed to send message. Please try again.");
+      setIsSuccess(false);
+    }
   };
 
   return (
     <>
-      {/* Success Toast */}
+      {/* ✅ Success Toast */}
       {status && isSuccess && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-[9999]">
           <div className="bg-green-500 text-white px-4 py-2 rounded-lg shadow">
@@ -54,7 +69,7 @@ export default function Contact() {
       <div className="h-auto lg:h-[90vh] bg-black flex items-center justify-center p-2">
         <div className="w-full mx-5 mt-5 flex flex-col lg:flex-row gap-10">
 
-          {/* Contact Form */}
+          {/* 📬 Contact Form */}
           <div className="bg-gray-900 p-6 rounded-xl border-2 border-gray-700 w-full lg:w-3/4">
             <h2 className="text-3xl font-bold mb-5 text-white border-l-4 border-blue-500 pl-4">
               Contact Form
@@ -100,13 +115,15 @@ export default function Contact() {
             )}
           </div>
 
-          {/* Map */}
+          {/* 🗺️ Google Map (FIXED – NO INVALID pb) */}
           <div className="w-full max-w-4xl h-[60vh] lg:h-[80vh] rounded-xl overflow-hidden border-2 border-gray-700">
             <iframe
               title="Office Location"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.584860496257!2d-122.4013646846825!3d37.793616979756886"
+              src="https://www.google.com/maps?q=Salesforce%20Tower&output=embed"
               className="w-full h-full"
               loading="lazy"
+              allowFullScreen
+              referrerPolicy="no-referrer-when-downgrade"
             />
           </div>
 
