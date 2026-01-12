@@ -6,10 +6,14 @@ export default function Contact() {
   const [status, setStatus] = useState("");
   const [isSuccess, setIsSuccess] = useState(null);
 
-  // 🔐 ENV VARIABLES (build-time safe)
+  // 🔐 ENV VARIABLES
   const SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
   const TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
   const PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+  // 📍 HARD-CODED LOCATION (YOUR COORDINATES)
+  const LAT = 18.654514381426203;
+  const LON = 73.76274497248579;
 
   // ✅ Initialize EmailJS safely
   useEffect(() => {
@@ -24,7 +28,6 @@ export default function Contact() {
   const sendEmail = async (e) => {
     e.preventDefault();
 
-    // 🛑 Hard guard (prevents payload crash)
     if (!SERVICE_ID || !TEMPLATE_ID || !PUBLIC_KEY) {
       console.error("❌ EmailJS ENV missing:", {
         SERVICE_ID,
@@ -115,11 +118,11 @@ export default function Contact() {
             )}
           </div>
 
-          {/* 🗺️ Google Map (FIXED – NO INVALID pb) */}
+          {/* 🗺️ Google Map (HARDCODED LAT/LON – STABLE) */}
           <div className="w-full max-w-4xl h-[60vh] lg:h-[80vh] rounded-xl overflow-hidden border-2 border-gray-700">
             <iframe
-              title="Office Location"
-              src="https://www.google.com/maps?q=Salesforce%20Tower&output=embed"
+              title="My Location"
+              src={`https://www.google.com/maps?q=${LAT},${LON}&z=15&output=embed`}
               className="w-full h-full"
               loading="lazy"
               allowFullScreen
