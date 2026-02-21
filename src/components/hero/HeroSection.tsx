@@ -3,16 +3,6 @@ import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import HeroPerson from "./HeroPerson";
 import HeroTexts from "./HeroTexts";
 
-/* ───────────────────────────────────────────────
-   Floating code badges
-─────────────────────────────────────────────── */
-const CODE_SNIPPETS = [
-  { text: "async/await", top: "22%", left: "1%", delay: 0.3 },
-  { text: "<Innovation />", top: "40%", left: "0.5%", delay: 0.9 },
-  { text: "const dev = 🚀", top: "58%", left: "2%", delay: 1.5 },
-  { text: "npm run build", top: "75%", left: "1%", delay: 0.6 },
-];
-
 interface Spark {
   id: number;
   x: number;
@@ -30,9 +20,7 @@ const HeroSection = () => {
   const rafRef = useRef<number>(0);
   const idRef = useRef(0);
 
-  const [cursorPos, setCursorPos] = useState<{ x: number; y: number } | null>(
-    null
-  );
+  const [cursorPos, setCursorPos] = useState<{ x: number; y: number } | null>(null);
 
   /* 3D Rotation Motion */
   const rotX = useMotionValue(0);
@@ -40,16 +28,14 @@ const HeroSection = () => {
   const sRotX = useSpring(rotX, { stiffness: 90, damping: 20 });
   const sRotY = useSpring(rotY, { stiffness: 90, damping: 20 });
 
-  const glowOpacity = useTransform(
-    [sRotX, sRotY],
-    ([x, y]) => Math.min(0.25, (Math.abs(x) + Math.abs(y)) / 40)
+  /* Fixed: cast unknowns to number to resolve TypeScript error */
+  const glowOpacity = useTransform([sRotX, sRotY], (values: number[]) =>
+    Math.min(0.25, (Math.abs(values[0]) + Math.abs(values[1])) / 40)
   );
 
   /* Global Cursor */
   useEffect(() => {
-    const handler = (e: MouseEvent) =>
-      setCursorPos({ x: e.clientX, y: e.clientY });
-
+    const handler = (e: MouseEvent) => setCursorPos({ x: e.clientX, y: e.clientY });
     window.addEventListener("mousemove", handler);
     return () => window.removeEventListener("mousemove", handler);
   }, []);
@@ -77,7 +63,6 @@ const HeroSection = () => {
 
       for (let i = arr.length - 1; i >= 0; i--) {
         const s = arr[i];
-
         s.x += s.vx;
         s.y += s.vy;
         s.vx *= 0.98;
@@ -149,19 +134,15 @@ const HeroSection = () => {
       ref={sectionRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative min-h-screen flex items-center overflow-hidden pt-20 md:pt-24 pb-12 md:pb-16"
+      className="relative min-h-screen flex items-center overflow-hidden pt-16 md:pt-20 lg:pt-24 pb-8 md:pb-12 lg:pb-16"
       style={{ perspective: "1400px" }}
     >
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 pointer-events-none z-20"
-      />
+      <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none z-20" />
 
       <motion.div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background:
-            "radial-gradient(circle at center, hsl(var(--primary)/0.08), transparent 60%)",
+          background: "radial-gradient(circle at center, hsl(var(--primary)/0.08), transparent 60%)",
           opacity: glowOpacity,
         }}
       />
@@ -169,21 +150,20 @@ const HeroSection = () => {
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          backgroundImage:
-            "radial-gradient(circle, hsl(var(--primary)/0.15) 1px, transparent 1px)",
+          backgroundImage: "radial-gradient(circle, hsl(var(--primary)/0.15) 1px, transparent 1px)",
           backgroundSize: "40px 40px",
           opacity: 0.35,
         }}
       />
 
-      {/* Responsive Grid */}
-      <div className="container mx-auto px-5 sm:px-6 lg:px-16 grid grid-cols-1 lg:grid-cols-2 gap-10 md:gap-12 items-center relative z-30">
-        
-        {/* IMAGE FIRST ON MOBILE */}
+      {/* ── Responsive Grid ── */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-14 xl:px-16 grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 items-center relative z-30">
+
+        {/* CHARACTER — first on mobile, right column on desktop */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 30 }}
+          initial={{ opacity: 0, scale: 0.9, y: 24 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 1, delay: 0.3 }}
+          transition={{ duration: 0.9, delay: 0.3 }}
           className="relative flex justify-center lg:justify-end order-1 lg:order-2"
           style={{
             rotateX: sRotX,
@@ -191,47 +171,44 @@ const HeroSection = () => {
             transformPerspective: 900,
           }}
         >
-          <div className="relative w-full max-w-xs sm:max-w-sm md:max-w-md">
+          {/*
+            Mobile:  tight wrap — character fills most of viewport width at ~196px cap
+            Tablet:  max-w-[220px] so it stays proportionally sized
+            Desktop: max-w-[320px] — character scales up naturally
+          */}
+          <div className="relative w-full max-w-[200px] sm:max-w-[240px] md:max-w-[280px] lg:max-w-[320px] xl:max-w-[360px]">
             <motion.div
-              className="absolute inset-0 rounded-[2.5rem] md:rounded-[3rem] pointer-events-none"
+              className="absolute inset-0 rounded-[2rem] pointer-events-none"
               style={{
-                background:
-                  "radial-gradient(ellipse at 50% 60%, hsl(var(--primary)/0.18), transparent 70%)",
+                background: "radial-gradient(ellipse at 50% 60%, hsl(var(--primary)/0.18), transparent 70%)",
                 filter: "blur(10px)",
                 opacity: glowOpacity,
               }}
             />
-
-            <div
-              className="relative z-10 w-full"
-              style={{
-                height: "auto",
-                minHeight: "420px",
-              }}
-            >
+            <div className="relative z-10 w-full" style={{ minHeight: "auto" }}>
               <HeroPerson cursorPos={cursorPos} />
             </div>
           </div>
         </motion.div>
 
-        {/* TEXT SECOND ON MOBILE */}
+        {/* TEXT — second on mobile, left column on desktop */}
         <div className="order-2 lg:order-1 text-center lg:text-left">
           <HeroTexts />
         </div>
       </div>
 
-      {/* Scroll Indicator - Hide on Small Screens */}
+      {/* Scroll Indicator — desktop only */}
       <motion.div
-        className="hidden md:flex absolute bottom-8 left-1/2 -translate-x-1/2 flex-col items-center gap-2 z-40"
+        className="hidden md:flex absolute bottom-6 left-1/2 -translate-x-1/2 flex-col items-center gap-1.5 z-40"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 2 }}
       >
-        <span className="text-[10px] tracking-[0.2em] uppercase text-muted-foreground/50 font-semibold">
+        <span className="text-[9px] tracking-[0.22em] uppercase text-muted-foreground/50 font-semibold">
           Scroll
         </span>
         <motion.div
-          className="w-5 h-8 rounded-full border-2 border-primary/30 flex items-start justify-center pt-1.5"
+          className="w-4 h-7 rounded-full border-2 border-primary/30 flex items-start justify-center pt-1"
           animate={{
             borderColor: [
               "hsl(var(--primary)/0.3)",
@@ -242,8 +219,8 @@ const HeroSection = () => {
           transition={{ duration: 2, repeat: Infinity }}
         >
           <motion.div
-            className="w-1 h-2 rounded-full bg-primary"
-            animate={{ y: [0, 12, 0], opacity: [1, 0.2, 1] }}
+            className="w-0.5 h-1.5 rounded-full bg-primary"
+            animate={{ y: [0, 10, 0], opacity: [1, 0.2, 1] }}
             transition={{ duration: 1.6, repeat: Infinity }}
           />
         </motion.div>
