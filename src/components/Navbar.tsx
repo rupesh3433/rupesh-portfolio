@@ -1,111 +1,226 @@
-import { motion } from "framer-motion";
-import { Moon, Sun, Menu, X, Code2 } from "lucide-react";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { Moon, Sun, Menu, X } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const navLinks = [
-  { label: "Home", href: "#home" },
+  { label: "Home",     href: "#home"    },
   { label: "Projects", href: "#projects" },
-  { label: "Tech", href: "#tech" },
-  { label: "Contact", href: "#contact" },
+  { label: "Tech",     href: "#tech"    },
+  { label: "Contact",  href: "#contact" },
 ];
+
+/* ── 360° spinning logo mark ── */
+const SpinningLogo = () => (
+  <div className="relative w-9 h-9 flex-shrink-0">
+    {/* Outer ring — spins continuously */}
+    <motion.svg
+      viewBox="0 0 36 36"
+      className="absolute inset-0 w-full h-full"
+      animate={{ rotate: 360 }}
+      transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+    >
+      <circle cx="18" cy="18" r="16"
+        fill="none"
+        stroke="url(#logoRingGrad)"
+        strokeWidth="2"
+        strokeDasharray="6 4"
+        strokeLinecap="round"
+      />
+      <defs>
+        <linearGradient id="logoRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%"   stopColor="hsl(var(--primary))" stopOpacity="1" />
+          <stop offset="50%"  stopColor="hsl(var(--accent))"  stopOpacity="0.6" />
+          <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+    </motion.svg>
+
+    {/* Inner filled circle — counter-spins slightly for parallax */}
+    <motion.div
+      className="absolute inset-1.5 rounded-full flex items-center justify-center overflow-hidden"
+      style={{ background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))" }}
+      animate={{ rotate: -360 }}
+      transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
+    >
+      {/* Shine sweep */}
+      <motion.div
+        className="absolute inset-0 rounded-full"
+        style={{ background: "conic-gradient(from 0deg, transparent 70%, rgba(255,255,255,0.35) 85%, transparent 100%)" }}
+        animate={{ rotate: 360 }}
+        transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
+      />
+    </motion.div>
+
+    {/* Static "R" in center */}
+    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+      <span className="text-white font-display font-black text-sm leading-none z-10 select-none" style={{ textShadow: "0 1px 4px rgba(0,0,0,0.3)" }}>
+        R
+      </span>
+    </div>
+
+    {/* Pulsing outer glow */}
+    <motion.div
+      className="absolute inset-0 rounded-full pointer-events-none"
+      animate={{ boxShadow: ["0 0 0px hsl(var(--primary)/0.0)", "0 0 14px hsl(var(--primary)/0.45)", "0 0 0px hsl(var(--primary)/0.0)"] }}
+      transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+    />
+  </div>
+);
 
 const Navbar = () => {
   const { theme, toggleTheme } = useTheme();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [active, setActive]         = useState("Home");
+  const [scrolled, setScrolled]     = useState(false);
+  const { scrollY } = useScroll();
+
+  useEffect(() => {
+    const unsub = scrollY.on("change", (v) => setScrolled(v > 40));
+    return () => unsub();
+  }, [scrollY]);
 
   return (
     <motion.nav
-      initial={{ y: -80, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className="fixed top-4 left-0 right-0 z-50 mx-auto w-[92%] max-w-5xl"
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0,    opacity: 1  }}
+      transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+      className="fixed top-0 left-0 right-0 z-50 flex justify-center pt-4 px-4"
     >
-      <div className="relative rounded-2xl border border-border/50 bg-background/60 backdrop-blur-xl shadow-lg shadow-black/10 dark:shadow-black/30 px-5 py-3 flex items-center justify-between">
+      {/* Pill container */}
+      <motion.div
+        animate={{
+          boxShadow: scrolled
+            ? "0 8px 40px -8px rgba(0,0,0,0.28), 0 0 0 1px hsl(var(--border)/0.5), inset 0 1px 0 hsl(var(--primary)/0.08)"
+            : "0 2px 20px -4px rgba(0,0,0,0.10), 0 0 0 1px hsl(var(--border)/0.3)",
+        }}
+        className="w-full max-w-4xl rounded-2xl bg-background/72 dark:bg-background/65 px-4 py-2.5 flex items-center justify-between transition-all duration-500"
+        style={{ backdropFilter: "blur(18px)" }}
+      >
         {/* Logo */}
-        <a href="#home" className="flex items-center gap-2">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-          >
-            <Code2 className="w-7 h-7 text-primary" />
-          </motion.div>
-          <span className="font-display font-bold text-lg text-foreground">
-            Rupesh
+        <a href="#home" className="flex items-center gap-2.5 group" onClick={() => setActive("Home")}>
+          <SpinningLogo />
+          <span className="font-display font-bold text-base tracking-tight text-foreground group-hover:text-primary transition-colors duration-200">
+            Rupesh<span className="text-primary font-black">.</span>dev
           </span>
         </a>
 
-        {/* Center links — desktop */}
-        <div className="hidden md:flex items-center gap-8">
+        {/* Desktop links */}
+        <div className="hidden md:flex items-center gap-1">
           {navLinks.map((link) => (
             <a
               key={link.label}
               href={link.href}
-              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-200"
+              onClick={() => setActive(link.label)}
+              className="relative px-4 py-1.5 text-sm font-medium rounded-xl transition-colors duration-200"
             >
-              {link.label}
+              <span className={`relative z-10 transition-colors duration-200 ${active === link.label ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}>
+                {link.label}
+              </span>
+              {active === link.label && (
+                <motion.div
+                  layoutId="navPill"
+                  className="absolute inset-0 rounded-xl bg-primary/10 dark:bg-primary/15"
+                  transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
+                />
+              )}
             </a>
           ))}
         </div>
 
-        {/* Right side */}
-        <div className="flex items-center gap-3">
+        {/* Right actions */}
+        <div className="flex items-center gap-2">
+          {/* Theme toggle */}
           <motion.button
             onClick={toggleTheme}
-            whileHover={{ scale: 1.1 }}
-            whileTap={{ scale: 0.9 }}
-            className="p-2 rounded-lg bg-secondary/50 text-foreground hover:bg-secondary transition-colors"
+            whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.88 }}
+            className="w-8 h-8 rounded-xl flex items-center justify-center bg-secondary/60 hover:bg-secondary text-muted-foreground hover:text-foreground transition-all duration-200"
             aria-label="Toggle theme"
           >
-            {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            <AnimatePresence mode="wait">
+              <motion.div key={theme}
+                initial={{ rotate: -90, opacity: 0, scale: 0.5 }}
+                animate={{ rotate: 0,   opacity: 1, scale: 1   }}
+                exit={{ rotate: 90,    opacity: 0, scale: 0.5  }}
+                transition={{ duration: 0.22 }}
+              >
+                {theme === "dark" ? <Sun className="w-3.5 h-3.5" /> : <Moon className="w-3.5 h-3.5" />}
+              </motion.div>
+            </AnimatePresence>
           </motion.button>
 
+          {/* Hire Me */}
           <motion.a
             href="#contact"
-            className="hidden md:inline-block px-5 py-2 rounded-lg text-sm font-display font-semibold text-primary-foreground bg-primary glow-sm transition-all duration-300"
-            whileHover={{ scale: 1.05 }}
+            className="hidden md:inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-sm font-bold text-white relative overflow-hidden"
+            style={{ background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))" }}
+            whileHover={{ scale: 1.05, boxShadow: "0 0 24px -4px hsl(var(--primary)/0.5)" }}
             whileTap={{ scale: 0.95 }}
           >
-            Hire Me
+            <motion.div
+              className="absolute inset-0 bg-gradient-to-r from-transparent via-white/22 to-transparent -skew-x-12 pointer-events-none"
+              initial={{ x: "-100%" }}
+              whileHover={{ x: "200%" }}
+              transition={{ duration: 0.5 }}
+            />
+            <span className="relative z-10 font-display">Hire Me</span>
+            <motion.span className="relative z-10 text-xs opacity-80"
+              animate={{ x: [0, 3, 0] }} transition={{ duration: 1.4, repeat: Infinity }}>
+              →
+            </motion.span>
           </motion.a>
 
           {/* Mobile hamburger */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
-            className="md:hidden p-2 text-foreground"
+            className="md:hidden w-8 h-8 rounded-xl flex items-center justify-center bg-secondary/60 text-foreground"
             aria-label="Toggle menu"
           >
-            {mobileOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            <AnimatePresence mode="wait">
+              <motion.div key={mobileOpen ? "x" : "m"}
+                initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }}
+                exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}
+              >
+                {mobileOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+              </motion.div>
+            </AnimatePresence>
           </button>
         </div>
-      </div>
+      </motion.div>
 
       {/* Mobile menu */}
-      {mobileOpen && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mt-2 rounded-2xl border border-border/50 bg-background/80 backdrop-blur-xl shadow-lg p-4 md:hidden"
-        >
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              onClick={() => setMobileOpen(false)}
-              className="block py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {link.label}
-            </a>
-          ))}
-          <a
-            href="#contact"
-            onClick={() => setMobileOpen(false)}
-            className="block mt-2 text-center px-5 py-2 rounded-lg text-sm font-display font-semibold text-primary-foreground bg-primary"
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -14, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0,   scale: 1    }}
+            exit={{ opacity: 0,    y: -10,  scale: 0.97 }}
+            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute top-[calc(100%+6px)] left-4 right-4 max-w-4xl mx-auto rounded-2xl border border-border/40 bg-background/92 backdrop-blur-2xl shadow-xl p-3"
+            style={{ width: "calc(100% - 2rem)" }}
           >
-            Hire Me
-          </a>
-        </motion.div>
-      )}
+            {navLinks.map((link, i) => (
+              <motion.a key={link.label} href={link.href}
+                onClick={() => { setMobileOpen(false); setActive(link.label); }}
+                initial={{ opacity: 0, x: -14 }}
+                animate={{ opacity: 1, x: 0    }}
+                transition={{ delay: i * 0.05  }}
+                className="block px-4 py-2.5 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary/50 transition-all duration-150"
+              >
+                {link.label}
+              </motion.a>
+            ))}
+            <div className="mt-2 pt-2 border-t border-border/30">
+              <a href="#contact" onClick={() => setMobileOpen(false)}
+                className="block text-center px-4 py-2.5 rounded-xl text-sm font-bold text-white"
+                style={{ background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))" }}
+              >
+                Hire Me →
+              </a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.nav>
   );
 };
