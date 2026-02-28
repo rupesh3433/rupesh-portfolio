@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import SocialLinks from "./SocialLinks";
+import SocialLinks from "../shared/SocialLinks";
 
 /* ── Icons ── */
 const MailIcon = () => (
