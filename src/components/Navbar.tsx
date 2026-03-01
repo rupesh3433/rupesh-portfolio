@@ -2,6 +2,7 @@ import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion"
 import { Moon, Sun, Menu, X } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
 import { useState, useEffect } from "react";
+import Logo from "./shared/Logo";
 
 const navLinks = [
   { label: "Home",     href: "#home"    },
@@ -9,64 +10,6 @@ const navLinks = [
   { label: "Tech",     href: "#tech"    },
   { label: "Contact",  href: "#contact" },
 ];
-
-/* ── 360° spinning logo mark ── */
-const SpinningLogo = () => (
-  <div className="relative w-9 h-9 flex-shrink-0">
-    {/* Outer ring — spins continuously */}
-    <motion.svg
-      viewBox="0 0 36 36"
-      className="absolute inset-0 w-full h-full"
-      animate={{ rotate: 360 }}
-      transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-    >
-      <circle cx="18" cy="18" r="16"
-        fill="none"
-        stroke="url(#logoRingGrad)"
-        strokeWidth="2"
-        strokeDasharray="6 4"
-        strokeLinecap="round"
-      />
-      <defs>
-        <linearGradient id="logoRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%"   stopColor="hsl(var(--primary))" stopOpacity="1" />
-          <stop offset="50%"  stopColor="hsl(var(--accent))"  stopOpacity="0.6" />
-          <stop offset="100%" stopColor="hsl(var(--primary))" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-    </motion.svg>
-
-    {/* Inner filled circle — counter-spins slightly for parallax */}
-    <motion.div
-      className="absolute inset-1.5 rounded-full flex items-center justify-center overflow-hidden"
-      style={{ background: "linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)))" }}
-      animate={{ rotate: -360 }}
-      transition={{ duration: 12, repeat: Infinity, ease: "linear" }}
-    >
-      {/* Shine sweep */}
-      <motion.div
-        className="absolute inset-0 rounded-full"
-        style={{ background: "conic-gradient(from 0deg, transparent 70%, rgba(255,255,255,0.35) 85%, transparent 100%)" }}
-        animate={{ rotate: 360 }}
-        transition={{ duration: 2.5, repeat: Infinity, ease: "linear" }}
-      />
-    </motion.div>
-
-    {/* Static "R" in center */}
-    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-      <span className="text-white font-display font-black text-sm leading-none z-10 select-none" style={{ textShadow: "0 1px 4px rgba(0,0,0,0.3)" }}>
-        R
-      </span>
-    </div>
-
-    {/* Pulsing outer glow */}
-    <motion.div
-      className="absolute inset-0 rounded-full pointer-events-none"
-      animate={{ boxShadow: ["0 0 0px hsl(var(--primary)/0.0)", "0 0 14px hsl(var(--primary)/0.45)", "0 0 0px hsl(var(--primary)/0.0)"] }}
-      transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-    />
-  </div>
-);
 
 const Navbar = () => {
   const { theme, toggleTheme } = useTheme();
@@ -99,7 +42,7 @@ const Navbar = () => {
       >
         {/* Logo */}
         <a href="#home" className="flex items-center gap-2.5 group" onClick={() => setActive("Home")}>
-          <SpinningLogo />
+          <Logo />
           <span className="font-display font-bold text-base tracking-tight text-foreground group-hover:text-primary transition-colors duration-200">
             Rupesh<span className="text-primary font-black">.</span>dev
           </span>
