@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useCallback } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import HeroPerson from "./HeroPerson";
 import HeroTexts from "./HeroTexts";
+import stickerImage from "@/assets/sticker_image.png";
 
 interface Spark {
   id: number;
@@ -13,32 +13,35 @@ interface Spark {
   hue: number;
 }
 
+/* ─────────────────────────────────────────
+   🎛️  CONTROL PANEL — tweak these values
+───────────────────────────────────────── */
+const IMAGE_WIDTH = {
+  mobile: 160,  // px  — change to make image bigger/smaller on mobile
+  sm:     190,  // px  — small screens (640px+)
+  md:     220,  // px  — tablets (768px+)
+  lg:     310,  // px  — desktop (1024px+)
+  xl:     360,  // px  — wide screens (1280px+)
+};
+
+// Nudge image downward on mobile & tablet (0 = no shift, higher = more down)
+const IMAGE_MOBILE_TOP_OFFSET = 18; // px
+/* ───────────────────────────────────────── */
+
 const HeroSection = () => {
   const sectionRef = useRef<HTMLElement>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const sparksRef = useRef<Spark[]>([]);
-  const rafRef = useRef<number>(0);
-  const idRef = useRef(0);
+  const canvasRef  = useRef<HTMLCanvasElement>(null);
+  const sparksRef  = useRef<Spark[]>([]);
+  const rafRef     = useRef<number>(0);
+  const idRef      = useRef(0);
 
-  const [cursorPos, setCursorPos] = useState<{ x: number; y: number } | null>(null);
-
-  /* 3D Rotation Motion */
-  const rotX = useMotionValue(0);
-  const rotY = useMotionValue(0);
-  const sRotX = useSpring(rotX, { stiffness: 90, damping: 20 });
-  const sRotY = useSpring(rotY, { stiffness: 90, damping: 20 });
-
-  /* Fixed: cast unknowns to number to resolve TypeScript error */
+  const rotX        = useMotionValue(0);
+  const rotY        = useMotionValue(0);
+  const sRotX       = useSpring(rotX, { stiffness: 90, damping: 20 });
+  const sRotY       = useSpring(rotY, { stiffness: 90, damping: 20 });
   const glowOpacity = useTransform([sRotX, sRotY], (values: number[]) =>
     Math.min(0.25, (Math.abs(values[0]) + Math.abs(values[1])) / 40)
   );
-
-  /* Global Cursor */
-  useEffect(() => {
-    const handler = (e: MouseEvent) => setCursorPos({ x: e.clientX, y: e.clientY });
-    window.addEventListener("mousemove", handler);
-    return () => window.removeEventListener("mousemove", handler);
-  }, []);
 
   /* Spark Particle Engine */
   useEffect(() => {
@@ -50,44 +53,35 @@ const HeroSection = () => {
     const resize = () => {
       const p = canvas.parentElement;
       if (!p) return;
-      canvas.width = p.clientWidth;
+      canvas.width  = p.clientWidth;
       canvas.height = p.clientHeight;
     };
-
     resize();
     window.addEventListener("resize", resize);
 
     const loop = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       const arr = sparksRef.current;
-
       for (let i = arr.length - 1; i >= 0; i--) {
         const s = arr[i];
-        s.x += s.vx;
-        s.y += s.vy;
+        s.x  += s.vx;
+        s.y  += s.vy;
         s.vx *= 0.98;
         s.vy *= 0.98;
         s.vy += 0.05;
         s.life -= 0.015;
-
-        if (s.life <= 0) {
-          arr.splice(i, 1);
-          continue;
-        }
-
+        if (s.life <= 0) { arr.splice(i, 1); continue; }
         const r = 3 * s.life;
         ctx.beginPath();
         ctx.arc(s.x, s.y, r, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(${s.hue}, 90%, 60%, ${s.life})`;
-        ctx.shadowBlur = 15;
+        ctx.fillStyle   = `hsla(${s.hue}, 90%, 60%, ${s.life})`;
+        ctx.shadowBlur  = 15;
         ctx.shadowColor = `hsla(${s.hue}, 90%, 55%, 0.6)`;
         ctx.fill();
-        ctx.shadowBlur = 0;
+        ctx.shadowBlur  = 0;
       }
-
       rafRef.current = requestAnimationFrame(loop);
     };
-
     rafRef.current = requestAnimationFrame(loop);
 
     return () => {
@@ -96,23 +90,18 @@ const HeroSection = () => {
     };
   }, []);
 
-  /* Mouse Interaction */
   const handleMouseMove = useCallback(
     (e: React.MouseEvent<HTMLElement>) => {
       const rect = sectionRef.current?.getBoundingClientRect();
       if (!rect) return;
-
       const mx = e.clientX - rect.left;
       const my = e.clientY - rect.top;
-
-      rotY.set(((mx - rect.width / 2) / rect.width) * 14);
+      rotY.set(((mx - rect.width  / 2) / rect.width)  * 14);
       rotX.set(-((my - rect.height / 2) / rect.height) * 14);
-
       for (let i = 0; i < 2; i++) {
         sparksRef.current.push({
           id: idRef.current++,
-          x: mx,
-          y: my,
+          x: mx, y: my,
           vx: (Math.random() - 0.5) * 4,
           vy: (Math.random() - 0.5) * 4 - 1,
           life: 1,
@@ -134,11 +123,37 @@ const HeroSection = () => {
       ref={sectionRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative min-h-screen flex items-center overflow-hidden pt-16 md:pt-20 lg:pt-24 pb-8 md:pb-12 lg:pb-16"
+      /* min-h-screen + flex items-center = full vertical centering */
+      className="relative min-h-screen flex items-center overflow-hidden pt-16 md:pt-20 pb-8 md:pb-12 lg:pb-16"
       style={{ perspective: "1400px" }}
     >
+      {/*
+        🎛️ Responsive image styles — driven entirely by the constants above.
+        Change IMAGE_WIDTH values or IMAGE_MOBILE_TOP_OFFSET at the top of this file.
+      */}
+      <style>{`
+        .hero-sticker {
+          width: ${IMAGE_WIDTH.mobile}px;
+          margin-top: ${IMAGE_MOBILE_TOP_OFFSET}px;
+          max-height: 62vh;
+          mix-blend-mode: multiply;
+          filter: drop-shadow(0 8px 32px hsl(var(--primary) / 0.28));
+          object-fit: contain;
+          position: relative;
+          z-index: 10;
+          user-select: none;
+          display: block;
+        }
+        @media (min-width: 640px)  { .hero-sticker { width: ${IMAGE_WIDTH.sm}px; } }
+        @media (min-width: 768px)  { .hero-sticker { width: ${IMAGE_WIDTH.md}px; } }
+        @media (min-width: 1024px) { .hero-sticker { width: ${IMAGE_WIDTH.lg}px; margin-top: 0; } }
+        @media (min-width: 1280px) { .hero-sticker { width: ${IMAGE_WIDTH.xl}px; } }
+      `}</style>
+
+      {/* Spark canvas */}
       <canvas ref={canvasRef} className="absolute inset-0 pointer-events-none z-20" />
 
+      {/* Mouse-driven radial glow */}
       <motion.div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -147,6 +162,7 @@ const HeroSection = () => {
         }}
       />
 
+      {/* Dot grid */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
@@ -156,48 +172,50 @@ const HeroSection = () => {
         }}
       />
 
-      {/* ── Responsive Grid ── */}
-      <div className="container mx-auto px-4 sm:px-6 lg:px-14 xl:px-16 grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 items-center relative z-30">
+      {/* ── Two-column grid ── */}
+      <div className="container mx-auto px-4 sm:px-6 lg:px-14 xl:px-16 relative z-30 w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-0 lg:gap-10 items-center">
 
-        {/* CHARACTER — first on mobile, right column on desktop */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 24 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          transition={{ duration: 0.9, delay: 0.3 }}
-          className="relative flex justify-center lg:justify-end order-1 lg:order-2"
-          style={{
-            rotateX: sRotX,
-            rotateY: sRotY,
-            transformPerspective: 900,
-          }}
-        >
-          {/*
-            Mobile:  tight wrap — character fills most of viewport width at ~196px cap
-            Tablet:  max-w-[220px] so it stays proportionally sized
-            Desktop: max-w-[320px] — character scales up naturally
-          */}
-          <div className="relative w-full max-w-[200px] sm:max-w-[240px] md:max-w-[280px] lg:max-w-[320px] xl:max-w-[360px]">
-            <motion.div
-              className="absolute inset-0 rounded-[2rem] pointer-events-none"
-              style={{
-                background: "radial-gradient(ellipse at 50% 60%, hsl(var(--primary)/0.18), transparent 70%)",
-                filter: "blur(10px)",
-                opacity: glowOpacity,
-              }}
-            />
-            <div className="relative z-10 w-full" style={{ minHeight: "auto" }}>
-              <HeroPerson cursorPos={cursorPos} />
+          {/* LEFT — text, vertically + horizontally centered on mobile, left-aligned on desktop */}
+          <motion.div
+            className="order-2 lg:order-1 flex items-center justify-center lg:justify-start mt-8 sm:mt-10 lg:mt-0"
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+          >
+            <HeroTexts />
+          </motion.div>
+
+          {/* RIGHT — sticker, centered in column */}
+          <motion.div
+            className="order-1 lg:order-2 flex items-center justify-center -mb-8 sm:-mb-10 lg:mb-0"
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.9, delay: 0.35, ease: "easeOut" }}
+          >
+            <div className="relative flex items-center justify-center">
+              {/* Glow blob */}
+              <div
+                className="absolute pointer-events-none"
+                style={{
+                  inset: "-10%",
+                  background: "radial-gradient(ellipse at 50% 60%, hsl(var(--primary)/0.22), transparent 65%)",
+                  filter: "blur(32px)",
+                }}
+              />
+              <img
+                src={stickerImage}
+                alt="Rupesh Poudel"
+                draggable={false}
+                className="hero-sticker"
+              />
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
 
-        {/* TEXT — second on mobile, left column on desktop */}
-        <div className="order-2 lg:order-1 text-center lg:text-left">
-          <HeroTexts />
         </div>
       </div>
 
-      {/* Scroll Indicator — desktop only */}
+      {/* Scroll indicator */}
       <motion.div
         className="hidden md:flex absolute bottom-6 left-1/2 -translate-x-1/2 flex-col items-center gap-1.5 z-40"
         initial={{ opacity: 0 }}
