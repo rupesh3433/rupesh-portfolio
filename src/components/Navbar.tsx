@@ -41,7 +41,7 @@ const Navbar = () => {
         style={{ backdropFilter: "blur(18px)" }}
       >
         {/* Logo */}
-        <a href="#home" className="flex items-center gap-2.5 group" onClick={() => setActive("Home")}>
+        <a href="#home" className="flex items-center gap-0 group" onClick={() => setActive("Home")}>
           <Logo />
           <span className="font-display font-bold text-base tracking-tight text-foreground group-hover:text-primary transition-colors duration-200">
             Rupesh<span className="text-primary font-black">.</span>dev
@@ -55,7 +55,7 @@ const Navbar = () => {
               key={link.label}
               href={link.href}
               onClick={() => setActive(link.label)}
-              className="relative px-4 py-1.5 text-sm font-medium rounded-xl transition-colors duration-200"
+              className="relative px-4 py-1.5 text-sm font-small rounded-xl transition-colors duration-200"
             >
               <span className={`relative z-10 transition-colors duration-200 ${active === link.label ? "text-primary" : "text-muted-foreground hover:text-foreground"}`}>
                 {link.label}
