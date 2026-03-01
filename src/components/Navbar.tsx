@@ -6,8 +6,8 @@ import Logo from "./shared/Logo";
 
 const navLinks = [
   { label: "Home",     href: "#home"    },
-  { label: "Projects", href: "#projects" },
   { label: "Tech",     href: "#tech"    },
+  { label: "Projects", href: "#projects" },
   { label: "Contact",  href: "#contact" },
 ];
 
