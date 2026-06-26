@@ -5,7 +5,6 @@ import {
   Download,
   Sparkles,
 } from "lucide-react";
-import resumeFile from "@/assets/resumeRupesh2026.pdf";
 
 /* ════════════════════════════════════════
    TYPEWRITER HOOK
@@ -139,6 +138,7 @@ const HeroTexts = () => {
   const typed = useTypewriter(TITLES);
   const fullName = "Rupesh Poudel";
   const firstName = "Rupesh";
+  const resumeFile = "/rupeshResume2026.pdf";
 
   return (
     <div className="relative flex flex-col w-full max-w-xl mx-auto lg:mx-0">
@@ -356,7 +356,8 @@ const HeroTexts = () => {
 
           {/* Research Paper */}
           <motion.a
-            href="https://thegrenze.com/index.php?display=page&view=journalabstract&absid=6813&id=8"
+            href="https://scholar.google.co.in/citations?view_op=view_citation&hl=en&user=N-WoJGEAAAAJ&citation_for_view=N-WoJGEAAAAJ:u5HHmVD_uO8C&gmla=ACrTK9VR57GVesazDYrozfzHMLSeia2tkzRiV757bZGUPD-L0trTQLSKlEccxhHHTz2WMqE9AFtdZ-PirGZorP3-&sciund=8999185729731747115"
+            // href="https://thegrenze.com/index.php?display=page&view=journalabstract&absid=6813&id=8"
             target="_blank"
             rel="noopener noreferrer"
             className="
@@ -374,7 +375,7 @@ const HeroTexts = () => {
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.96 }}
           >
-            📄 Research Paper
+            📄 Google Scholar
           </motion.a>
         </motion.div>
 

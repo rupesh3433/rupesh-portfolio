@@ -64,7 +64,8 @@ const PROJECTS: Project[] = [
     links: [
       { label: "Live Demo", href: "https://apache-log-parser.vercel.app/",   icon: <ExternalLink size={10} />, style: "bg-[#10b981] text-white hover:bg-[#059669]" },
       { label: "GitHub",    href: "https://github.com/rupesh3433/ApacheLogParser_backend_blueprint", icon: <Github size={10} />, style: "border border-[#10b981]/50 text-[#10b981] hover:bg-[#10b981]/10" },
-      { label: "Paper",     href: "https://thegrenze.com/index.php?display=page&view=journalabstract&absid=6813&id=8", icon: <FileText size={10} />, style: "border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20" },
+      // { label: "Paper",     href: "https://thegrenze.com/index.php?display=page&view=journalabstract&absid=6813&id=8", icon: <FileText size={10} />, style: "border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/20" },
+      { label: "Paper",  href: "https://openurl.ebsco.com/contentitem/gcd:192272872?sid=ebsco:plink:crawler-gcd&id=ebsco:gcd:192272872&crl=c&jrnl=23955287", icon: <ExternalLink size={10} />, style: "border border-amber-500/40 text-amber-600 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20" }
     ],
   },
   {
